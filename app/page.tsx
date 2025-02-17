@@ -4,8 +4,8 @@ export default function Home() {
 return (
   <div className="">
     <input></input>
-    <Button size="lg">
-      Primary
+    <Button size="xs">
+      Primary123
     </Button>
     <Button variant="secondary">
       Secondary
