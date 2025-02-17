@@ -26,7 +26,7 @@ import {
 
 const formSchema = z.object({
     email: z.string().trim().email(),  
-    password: z.string().min(5).max(256),   
+    password: z.string().min(1, "Password is required"),   
 });
 
 export const SignInCard = () => {

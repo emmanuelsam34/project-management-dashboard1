@@ -1,9 +1,12 @@
+import { useForm} from 'react-hook-form';
+import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { DottedSeparator } from '@/components/dotted-separator';
 import { Button } from '@/components/ui/button';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import  Link  from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { 
     Card, 
@@ -12,7 +15,35 @@ import {
     CardHeader, 
     CardTitle } from '@/components/ui/card';
 
+import {
+        Form,
+        FormControl,
+        FormField,
+        FormItem,
+        FormLabel,
+        FormMessage,
+} from "@/components/ui/form";
+
+const formSchema = z.object({
+    fullName: z.string().trim().min(1, "Required"),
+    email: z.string().trim().email(),
+    password: z.string().min(1, "Password is required"),
+});
+
 export const SignUpCard = () => {
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            fullName: "",
+            email: "",
+            password: "",
+        },
+    });
+
+    const onSubmit = (values: z.infer<typeof formSchema>) => {
+        console.log({values});
+    }
+
     return (
         <Card className="w-full h-full md:w-[487px] border-none shadow-none">
             <CardHeader className="flex items-center justify-center text-center p-7">
@@ -31,38 +62,69 @@ export const SignUpCard = () => {
             <div className="px-7">
                 <DottedSeparator />
             </div>
+            
             <CardContent className="p-7">
-                <form className="space-y-4">
-                <Input 
-                required
-                type="text"
-                value={""}
-                onChange={() => {}}
-                placeholder="Enter full name"
-                disabled={false}
+                <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                
+            <FormField
+                name="fullName"
+                control={form.control}
+                render={({ field }) => (
+            <FormItem>
+            <FormLabel></FormLabel>
+            <FormControl>
+                <Input
+                    type="text"
+                    {...field}
+                    placeholder="Enter full name"
                 />
-                <Input 
-                required
-                type="email"
-                value={""}
-                onChange={() => {}}
-                placeholder="Enter email address"
-                disabled={false}
+            </FormControl>
+            <FormMessage />
+            </FormItem>
+            )} 
+            />
+
+            <FormField
+            name="email"
+            control={form.control}
+            render={({ field }) => (
+            <FormItem>
+            <FormLabel></FormLabel>
+            <FormControl>
+                <Input
+                    type="email"
+                    {...field}
+                    placeholder="Enter email address"
                 />
-                <Input 
-                required
-                type="password"
-                value={""}
-                onChange={() => {}}
-                placeholder="Enter password"
-                disabled={false}
-                min={8}
-                max={256}
+            </FormControl>
+            <FormMessage />
+            </FormItem>
+            )}
+            />
+
+            <FormField
+            name="password"
+            control={form.control}
+            render={({ field }) => (
+            <FormItem>
+            <FormLabel></FormLabel>
+            <FormControl>
+                <Input
+                    type="password"
+                    {...field}
+                    placeholder="Enter password"
                 />
-                <Button disabled={false} size="lg" className="w-full">
+            </FormControl>
+            <FormMessage />
+            </FormItem>
+            )}
+            />
+            <Button disabled={false} size="lg" className="w-full">
                     Login 
-                </Button>
-                </form>
+            </Button>
+            </form>
+            </Form>
             </CardContent>
             <div className="px-7">
                 <DottedSeparator />
