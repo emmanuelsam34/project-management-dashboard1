@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
 return (
   <div className="">
-    <Button>
+    <input></input>
+    <Button size="lg">
       Primary
     </Button>
     <Button variant="secondary">
@@ -19,7 +20,10 @@ return (
       Outline
     </Button>
     <Button variant="muted">
-      Link
+      Muted
+    </Button>
+    <Button variant="teritary">
+      Teritary
     </Button>
   </div>
  )
