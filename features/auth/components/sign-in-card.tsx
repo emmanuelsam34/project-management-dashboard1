@@ -1,3 +1,5 @@
+import { Input } from '@/components/ui/input';
+import { DottedSeparator } from '@/components/dotted-separator';
 import { 
     Card, 
     CardContent, 
@@ -12,6 +14,21 @@ export const SignInCard = () => {
                     Welcome Back
                 </CardTitle>
             </CardHeader>
+            <div className="px-7">
+                <DottedSeparator />
+            </div>
+            <CardContent className="p-7">
+                <form className="space-y-4">
+                <Input 
+                required
+                type="email"
+                value={""}
+                onChange={() => {}}
+                placeholder="Enter email address"
+                disabled={false}
+                />
+                </form>
+            </CardContent>
         </Card>
     );
 };
