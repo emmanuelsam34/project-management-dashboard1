@@ -25,7 +25,7 @@ import {
 
 
 const formSchema = z.object({
-    email: z.string().trim().min(1, "Required").email(),  
+    email: z.string().trim().email(),  
     password: z.string().min(5).max(256),   
 });
 

@@ -2,10 +2,10 @@
 
 import { SignUpCard } from "@/features/auth/components/sign-up-card";
 
-const SignUpPage = () => {
+const LoginPage = () => {
     return (
         <SignUpCard />
     );
 };
 
-export default SignUpPage;
+export default LoginPage;
