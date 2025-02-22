@@ -7,6 +7,7 @@ const app = new Hono().basePath('/api');
 const routes = app
     .route("/auth", auth);
 
-export const GET = handle(app); 
+export const GET = handle(app);
+export const POST = handle(app);  
 
 export type AppType = typeof app; 
