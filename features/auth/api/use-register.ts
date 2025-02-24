@@ -27,7 +27,7 @@ export const useRegister = () => {
   >({
     mutationFn: async (data) => {
       try {
-        // Validate the data before sending
+        
         await registerSchema.parseAsync(data);
 
         const response = await fetch('/api/auth/register', {

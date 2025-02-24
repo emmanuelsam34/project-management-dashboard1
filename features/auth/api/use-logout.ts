@@ -20,9 +20,9 @@ export const useLogout = () => {
       return response.json();
     },
     onSuccess: () => {
-      // Clear all queries from the cache
+      
       queryClient.clear();
-      // Redirect to login page
+     
       router.push('/sign-in');
     },
   });

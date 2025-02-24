@@ -1,13 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
-import { z } from "zod"; // Add this import
+import { z } from "zod"; 
 
-// Define the login schema using Zod
+
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1, "Password is required"),
 });
 
-// Define types from the schema
+
 type LoginResponse = {
   token?: string;
   user?: {
