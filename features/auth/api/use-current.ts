@@ -1,19 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { client } from "@/lib/rpc";
 
 export const useCurrent = () => {
-    const query = useQuery({
-        queryKey: ["current"],
-        queryFn: async () => {
-            try {
-                const response = await client.get('/current');
-                return response;
-            } catch (error) {
-                console.error('Error fetching current user:', error);
-                return null;
-            }
+  return useQuery({
+    queryKey: ["current"],
+    queryFn: async () => {
+      const response = await fetch("/api/auth/current", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
         },
-    });
+      });
 
-    return query;
+      if (!response.ok) {
+        throw new Error("Failed to fetch user");
+      }
+
+      const data = await response.json();
+      return data;
+    },
+  });
 };
