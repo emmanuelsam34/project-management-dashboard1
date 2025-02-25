@@ -6,13 +6,7 @@ export const useCurrent = () => {
   return useQuery({
     queryKey: ["current"],
     queryFn: async () => {
-      const response = await fetch("/api/auth/current", {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch("/api/auth/current");
 
       if (!response.ok) {
         throw new Error("Failed to fetch user");

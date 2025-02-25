@@ -1,5 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod"; 
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 const registerSchema = z.object({
@@ -20,6 +22,8 @@ type LoginResponse = {
 type LoginRequest = z.infer<typeof registerSchema>;
 
 export const useRegister = () => { 
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const mutation = useMutation<
     LoginResponse,
     Error,
@@ -49,6 +53,10 @@ export const useRegister = () => {
         }
         throw new Error(error instanceof Error ? error.message : 'Registration failed');
       }
+    },
+    onSuccess: () => {
+      router.refresh();
+      queryClient.invalidateQueries({ queryKey: ["current"] });
     }
   });
 
