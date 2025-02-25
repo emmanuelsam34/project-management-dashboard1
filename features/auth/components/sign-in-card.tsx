@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { useForm} from 'react-hook-form';
 import { z } from 'zod';
@@ -29,6 +31,7 @@ import { loginSchema } from "../schemas";
 import { useLogin } from "../api/use-login";
 
 export const SignInCard = () => {
+    
 
     const { mutate } = useLogin();
 
