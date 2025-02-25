@@ -1,5 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod"; 
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 const loginSchema = z.object({
@@ -19,6 +21,8 @@ type LoginResponse = {
 type LoginRequest = z.infer<typeof loginSchema>;
 
 export const useLogin = () => { 
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const mutation = useMutation<
     LoginResponse,
     Error,
@@ -26,7 +30,6 @@ export const useLogin = () => {
   >({
     mutationFn: async (data) => {
       try {
-        // Validate the data before sending
         await loginSchema.parseAsync(data);
 
         const response = await fetch('/api/auth/login', {
@@ -48,6 +51,11 @@ export const useLogin = () => {
         }
         throw new Error(error instanceof Error ? error.message : 'Login failed');
       }
+    },
+
+    onSuccess: () => {
+      router.refresh();
+      queryClient.invalidateQueries({ queryKey: ["current"] });
     }
   });
 

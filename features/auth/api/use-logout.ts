@@ -20,10 +20,8 @@ export const useLogout = () => {
       return response.json();
     },
     onSuccess: () => {
-      
-      queryClient.clear();
-     
-      router.push('/sign-in');
+      router.refresh();
+      queryClient.invalidateQueries({ queryKey: ["current"]});
     },
   });
 
