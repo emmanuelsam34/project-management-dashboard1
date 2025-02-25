@@ -11,7 +11,7 @@ export default async function Home() {
 
     return (
         <div>
-            <UserButton />
+            This is a homepage
         </div>
     );
 }
