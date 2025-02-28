@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod"; 
 import { useRouter } from "next/navigation";
@@ -54,10 +55,14 @@ export const useLogin = () => {
     },
 
     onSuccess: () => {
+      toast.success("Login successful");
       router.refresh();
       queryClient.invalidateQueries({ queryKey: ["current"] });
-    }
-  });
+    },
+    onError: (error) => {
+      toast.error("Login failed: " + error.message);    
+  },
+});
 
   return mutation;
 };

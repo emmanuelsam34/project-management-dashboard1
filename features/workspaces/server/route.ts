@@ -36,7 +36,6 @@ app.post(
                 {
                     name,
                     userId: user.$id,
-                    createdAt: new Date().toISOString(),
                 }
             );
 

@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod"; 
 import { useRouter } from "next/navigation";
@@ -55,9 +56,13 @@ export const useRegister = () => {
       }
     },
     onSuccess: () => {
+      toast.success("Registration successful");
       router.refresh();
       queryClient.invalidateQueries({ queryKey: ["current"] });
-    }
+    },
+    onError: (error) => {
+      toast.error("Registration failed: " + error.message);
+    },  
   });
 
   return mutation;
