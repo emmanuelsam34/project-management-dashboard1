@@ -1,32 +1,60 @@
-import { InferRequestType, InferResponseType } from "hono";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-import { client } from "@/lib/rpc";
-
-type ResponseType = InferResponseType<typeof client.api.workspaces ["$post"]>;
-type RequestType = InferRequestType<typeof client.api.workspaces ["$post"]>;
-
-export const useCreateWorkspace = () => {
-    const queryClient = useQueryClient();
+import { useMutation } from "@tanstack/react-query";
+import { z } from "zod"; 
+import { useQueryClient } from "@tanstack/react-query";
 
 
-    const mutation = useMutation<ResponseType, Error, RequestType>({
-        mutationFn: async ({ json }) => {
-            const response = await client.api.workspaces["$post"]({ json });
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1, "Password is required"),
+});
 
-            if (!response.ok) {
-                throw new Error("Failed to create workspace");
-            }
 
-            return response.json();
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["workspaces"] });
-        },
-    }); 
-
-    return mutation;
-
+type LoginResponse = {
+  token?: string;
+  user?: {
+    id: string;
+    email: string;
+  };
 };
 
+type LoginRequest = z.infer<typeof loginSchema>;
 
+export const useCreateWorkspace = () => { 
+  const queryClient = useQueryClient();
+  const mutation = useMutation<
+    LoginResponse,
+    Error,
+    LoginRequest
+  >({
+    mutationFn: async (data) => {
+      try {
+        await loginSchema.parseAsync(data);
+
+        const response = await fetch('/api/auth/workspaces', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          throw new Error('Workspace failed');
+        }
+
+        return await response.json();
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          throw new Error(error.errors[0].message);
+        }
+        throw new Error(error instanceof Error ? error.message : 'Workspace failed');
+      }
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["workspaces"] });
+    }
+  });
+
+  return mutation;
+};
