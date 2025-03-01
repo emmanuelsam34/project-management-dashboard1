@@ -7,6 +7,17 @@ import { ID } from "node-appwrite";
 
 const app = new Hono();
 
+app.get("/", sessionMiddleware, async (c) => {
+    const databases = c.get("databases");
+
+    const workspaces = await databases.listDocuments(
+        DATABASE_ID,
+        WORKSPACES_ID,
+    );
+
+    return c.json({ data: workspaces });
+})
+
 app.post("/", sessionMiddleware, async (c) => {
   try {
     const formData = await c.req.formData();

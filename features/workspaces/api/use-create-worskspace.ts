@@ -26,21 +26,21 @@ export const useCreateWorkspace = () => {
   return useMutation<WorkspaceResponse, Error, WorkspaceRequest>({
     mutationFn: async (form) => {
       try {
-        // Validate the form data
+        
         const validated = await workspaceSchema.parseAsync(form);
 
-        // Create FormData with validated data
+        
         const formData = new FormData();
         formData.append('name', validated.name);
         
-        // Handle image upload separately
+        
         if (validated.image && validated.image instanceof File) {
-          // Check file size (e.g., max 5MB)
+          
           if (validated.image.size > 5 * 1024 * 1024) {
             throw new Error('Image size must be less than 5MB');
           }
           
-          // Check file type
+          
           if (!validated.image.type.startsWith('image/')) {
             throw new Error('File must be an image');
           }
@@ -48,7 +48,7 @@ export const useCreateWorkspace = () => {
           formData.append('image', validated.image);
         }
 
-        // Make the API request
+        
         const response = await fetch('/api/workspaces', {
           method: 'POST',
           credentials: 'include',
