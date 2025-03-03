@@ -4,6 +4,7 @@ import { Databases, Client, Query, Account } from "node-appwrite"
 import { AUTH_COOKIE } from "@/features/auth/constants"
 
 import { DATABASE_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config"
+import { WorkspaceSwitcher } from "@/components/workspace-switcher"
 
 export const getWorkspaces = async () => {
     try {
@@ -14,7 +15,7 @@ export const getWorkspaces = async () => {
         const session = await cookies().get(AUTH_COOKIE);
 
         if (!session) {
-            return null;
+            return { documents: [], total: 0 };
         }
 
         client.setSession(session.value);
@@ -44,10 +45,14 @@ export const getWorkspaces = async () => {
                 Query.orderDesc('$createdAt')
             ]
         );
+
+        return workspaces;
     
         } catch (error) {
             console.error('Error in getCurrent:', error);
-            return null;    
+            return { documents: [], total: 0 };   
         }
     }
+
+
 
