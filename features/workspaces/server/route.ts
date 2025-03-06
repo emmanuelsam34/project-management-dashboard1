@@ -1,11 +1,13 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { createWorkspaceSchema } from "@/features/workspaces/schemas";
+import { createWorkspaceSchema, updateWorkspaceSchema } from "@/features/workspaces/schemas";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { DATABASE_ID, WORKSPACES_ID, IMAGES_BUCKET_ID, MEMBERS_ID } from "@/config";
 import { ID, Query } from "node-appwrite";
 import { MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
+import { getMember } from "@/features/members/utils";
+import { error } from "console";
 
 const app = new Hono();
 
@@ -120,7 +122,63 @@ app.post("/", sessionMiddleware, async (c) => {
     }
 });
 
+app.patch(
+    "/:workspaceId",
+    sessionMiddleware,
+    zValidator("form", updateWorkspaceSchema),
+    async (c) => {
+        const databases = c.get("databases");
+        const storage = c.get("storage");
+        const user = c.get("user");
+        const formData = await c.req.formData();
+        const imageFile = formData.get('image') as File | null;
+
+        const {workspaceId} = c.req.param();
+        const {name, image} = c.req.valid("form");
+
+        const member = await getMember({
+            databases,
+            workspaceId,
+            userId: user.$id,
+        });
+
+        if (!member || member.role !== MemberRole.ADMIN) {
+            return c.json({error: "Unauthorized" }, 401);
+        }
+
+        let imageId: string | undefined;
+
+        
+        if (imageFile) {
+            try {
+                const file = await storage.createFile(
+                    IMAGES_BUCKET_ID,
+                    ID.unique(),
+                    imageFile
+                );
+                imageId = file.$id;
+            } catch (uploadError) {
+                console.error('Image upload error:', uploadError);
+                return c.json({ error: "Failed to upload image" }, 500);
+            }
+        }
+
+        const workspace = await databases.updateDocument(
+            DATABASE_ID,
+            WORKSPACES_ID,
+            workspaceId,
+            {
+                name,
+                image: imageId
+            }
+        );
+
+        return c.json({data: workspace})
+    }
+)
+
 export default app;
+
 
 
 
