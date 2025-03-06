@@ -173,7 +173,7 @@ app.patch(
             }
         );
 
-        return c.json({data: workspace})
+        return c.json({data: workspace});
     }
 )
 
