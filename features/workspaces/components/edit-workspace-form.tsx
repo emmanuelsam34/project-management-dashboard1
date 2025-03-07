@@ -17,6 +17,7 @@ import { DottedSeparator } from "@/components/dotted-separator";
 import { updateWorkspaceSchema } from "../schemas";
 import { useUpdateWorkspace } from "../api/use-update-workspace";
 import type { Workspace } from "../types";
+import { toast } from "sonner";
 
 interface EditWorkspaceFormProps {
     onCancel?: () => void;
@@ -51,10 +52,10 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
                 image: values.image instanceof File ? values.image : undefined
             },
             {
-                onSuccess: () => {
+                onSuccess: (data) => {
                     form.reset();
-                    router.refresh();
-                    onCancel?.();
+                    router.push(`/workspaces/${data.data.$id}`);
+                    toast.success("Workspace updated successfully");
                 }
             }
         );

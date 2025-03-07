@@ -113,17 +113,18 @@ app.post("/", sessionMiddleware, async (c) => {
     }
 });
 
-app.patch("/:workspaceId", sessionMiddleware, zValidator("form", updateWorkspaceSchema), async (c) => {
+app.patch("/:workspaceId", sessionMiddleware, async (c) => {
     try {
         const databases = c.get("databases");
         const storage = c.get("storage");
         const user = c.get("user");
+        
         const formData = await c.req.formData();
+        const name = formData.get('name') as string;
         const imageFile = formData.get('image') as File | null;
-
         const { workspaceId } = c.req.param();
-        const { name, image } = c.req.valid("form");
 
+        
         const member = await getMember({
             databases,
             workspaceId,
@@ -134,10 +135,31 @@ app.patch("/:workspaceId", sessionMiddleware, zValidator("form", updateWorkspace
             return c.json({ error: "Unauthorized" }, 401);
         }
 
-        let imageId: string | undefined;
+        
+        const existingWorkspace = await databases.getDocument(
+            DATABASE_ID,
+            WORKSPACES_ID,
+            workspaceId
+        );
 
+        let imageId = existingWorkspace.image;
+
+        
         if (imageFile) {
             try {
+                
+                if (existingWorkspace.image) {
+                    try {
+                        await storage.deleteFile(
+                            IMAGES_BUCKET_ID,
+                            existingWorkspace.image
+                        );
+                    } catch (deleteError) {
+                        console.error('Failed to delete old image:', deleteError);
+                    }
+                }
+
+                
                 const file = await storage.createFile(
                     IMAGES_BUCKET_ID,
                     ID.unique(),
@@ -150,17 +172,24 @@ app.patch("/:workspaceId", sessionMiddleware, zValidator("form", updateWorkspace
             }
         }
 
+        
         const workspace = await databases.updateDocument(
             DATABASE_ID,
             WORKSPACES_ID,
             workspaceId,
             {
-                name,
+                name: name || existingWorkspace.name,
                 image: imageId
             }
         );
 
-        return c.json({ data: workspace });
+        return c.json({ 
+            data: {
+                ...workspace,
+                $id: workspaceId, 
+                image: imageId ? `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${IMAGES_BUCKET_ID}/files/${imageId}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}&mode=admin` : undefined
+            }
+        });
     } catch (error) {
         console.error("Workspace update error:", error);
         return c.json({ error: "Failed to update workspace" }, 500);
