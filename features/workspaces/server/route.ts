@@ -7,17 +7,14 @@ import { ID, Query } from "node-appwrite";
 import { MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
 import { getMember } from "@/features/members/utils";
-import { error } from "console";
 
 const app = new Hono();
-
 
 app.get("/", sessionMiddleware, async (c) => {
     try {
         const user = c.get("user");
         const databases = c.get("databases");
 
-        
         const members = await databases.listDocuments(
             DATABASE_ID,
             MEMBERS_ID,
@@ -28,10 +25,8 @@ app.get("/", sessionMiddleware, async (c) => {
             return c.json({ data: { documents: [], total: 0 } });
         }
 
-        
         const workspaceIds = members.documents.map(member => member.workspaceId);
 
-        
         const workspaces = await databases.listDocuments(
             DATABASE_ID,
             WORKSPACES_ID,
@@ -53,13 +48,12 @@ app.get("/", sessionMiddleware, async (c) => {
     }
 });
 
-
 app.post("/", sessionMiddleware, async (c) => {
     try {
         const formData = await c.req.formData();
         const name = formData.get('name') as string;
         const imageFile = formData.get('image') as File | null;
-        
+
         const databases = c.get("databases");
         const storage = c.get("storage");
         const user = c.get("user");
@@ -70,7 +64,6 @@ app.post("/", sessionMiddleware, async (c) => {
 
         let imageId: string | undefined;
 
-        
         if (imageFile) {
             try {
                 const file = await storage.createFile(
@@ -85,7 +78,6 @@ app.post("/", sessionMiddleware, async (c) => {
             }
         }
 
-        
         const workspace = await databases.createDocument(
             DATABASE_ID,
             WORKSPACES_ID,
@@ -98,7 +90,6 @@ app.post("/", sessionMiddleware, async (c) => {
             }
         );
 
-        
         await databases.createDocument(
             DATABASE_ID,
             MEMBERS_ID,
@@ -122,19 +113,16 @@ app.post("/", sessionMiddleware, async (c) => {
     }
 });
 
-app.patch(
-    "/:workspaceId",
-    sessionMiddleware,
-    zValidator("form", updateWorkspaceSchema),
-    async (c) => {
+app.patch("/:workspaceId", sessionMiddleware, zValidator("form", updateWorkspaceSchema), async (c) => {
+    try {
         const databases = c.get("databases");
         const storage = c.get("storage");
         const user = c.get("user");
         const formData = await c.req.formData();
         const imageFile = formData.get('image') as File | null;
 
-        const {workspaceId} = c.req.param();
-        const {name, image} = c.req.valid("form");
+        const { workspaceId } = c.req.param();
+        const { name, image } = c.req.valid("form");
 
         const member = await getMember({
             databases,
@@ -143,12 +131,11 @@ app.patch(
         });
 
         if (!member || member.role !== MemberRole.ADMIN) {
-            return c.json({error: "Unauthorized" }, 401);
+            return c.json({ error: "Unauthorized" }, 401);
         }
 
         let imageId: string | undefined;
 
-        
         if (imageFile) {
             try {
                 const file = await storage.createFile(
@@ -173,9 +160,12 @@ app.patch(
             }
         );
 
-        return c.json({data: workspace});
+        return c.json({ data: workspace });
+    } catch (error) {
+        console.error("Workspace update error:", error);
+        return c.json({ error: "Failed to update workspace" }, 500);
     }
-)
+});
 
 export default app;
 

@@ -9,11 +9,8 @@ export const createWorkspaceSchema = z.object({
 });
 
 export const updateWorkspaceSchema = z.object({
-  name: z.string().trim().min(1, "Must be 1 or more characters").optional(),
-  image: z.union([
-    z.instanceof(File),
-    z.string().transform((value) => value === "" ? undefined : value),
-  ]).optional(), 
+    name: z.string().min(1, "Workspace name is required").max(50),
+    image: z.union([z.instanceof(File), z.string()]).optional(),
 });
 
 

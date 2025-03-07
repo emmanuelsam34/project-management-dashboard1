@@ -69,7 +69,7 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
     return (
         <Card className="w-full h-full border-none shadow-none">
             <CardHeader className="flex p-7 items-center">
-                <CardTitle>Create a new workspace</CardTitle>
+                <CardTitle className="text-xl font-bold">Create a new workspace</CardTitle>
             </CardHeader>
             <div className="px-7">
                 <DottedSeparator />
