@@ -67,7 +67,7 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
         }
     };
 
-    // Add image preview cleanup
+    
     useEffect(() => {
         return () => {
             const imageValue = form.getValues("image");
@@ -116,13 +116,19 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
                                         {field.value ? (
                                             <div className="size-[72px] relative rounded-md overflow-hidden">
                                                 <Image 
-                                                    alt="Logo"
+                                                    alt="logo"
                                                     fill 
                                                     className="object-cover"
                                                     src={field.value instanceof File 
                                                         ? URL.createObjectURL(field.value)
-                                                        : `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.NEXT_PUBLIC_IMAGES_BUCKET_ID}/files/${field.value}/preview?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`
+                                                        : field.value 
+                                                            ? `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.NEXT_PUBLIC_IMAGES_BUCKET_ID}/files/${field.value}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}&mode=admin`
+                                                            : ''
                                                     } 
+                                                    onError={(e) => {
+                                                        console.error('Image load error:', e);
+                                                        form.setValue('image', undefined);
+                                                    }}
                                                 />
                                             </div>
                                         ) : (
