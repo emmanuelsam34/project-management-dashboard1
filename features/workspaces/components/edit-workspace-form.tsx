@@ -92,7 +92,7 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
                     <ArrowLeftIcon className="size-4 mr-2"/>
                     Back
                 </Button>
-                <CardTitle className="text-xl font-bold">{initialValues.name}</CardTitle>
+                <CardTitle className="text-xl items-center font-bold">{initialValues.name}</CardTitle>
             </CardHeader>
             <div className="px-7">
                 <DottedSeparator />
@@ -162,16 +162,35 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
                                                 onChange={handleImageChange}
                                                 disabled={isPending}
                                             />
+                                        {field.value ? (
+                                        <Button
+                                        type="button"
+                                        disabled={isPending}
+                                        variant="destructive"
+                                        size="xs"
+                                        className="w-fit mt-2"
+                                        onClick={() => {
+                                            field.onChange(null);
+                                            if (inputRef.current){
+                                                inputRef.current.value = ""
+                                            }
+                                        }}
+                                        >
+                                            Remove Image
+                                        </Button>
+                                        ) : (
                                             <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                className="mt-2 w-fit"
-                                                onClick={() => inputRef.current?.click()}
-                                                disabled={isPending}
+                                            type="button"
+                                            disabled={isPending}
+                                            variant="teritary"
+                                            size="xs"
+                                            className="w-fit mt-2"
+                                            onClick={() => inputRef.current?.click()}
                                             >
                                                 Upload Image
                                             </Button>
+                                        )
+                                        }
                                         </div>
                                     </div>
                                 </FormItem>
