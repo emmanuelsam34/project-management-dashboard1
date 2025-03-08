@@ -121,7 +121,7 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
                                     )}  
                                     <div className="flex flex-col">
                                         <p className="text-sm">Workspace Icon</p>
-                                        <p className="text-sm text-muted-foreground"> JPG, PNG, SVG or JPEG, max 1MB</p>
+                                        <p className="text-sm text-muted-foreground"> JPG, PNG, SVG or JPEG, max 300KB</p>
                                         <input
                                         className="hidden"
                                         type="file"

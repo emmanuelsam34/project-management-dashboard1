@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ImageIcon } from "lucide-react";
+import { ArrowLeftIcon, ImageIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -80,8 +80,12 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
 
     return (
         <Card className="w-full h-full border-none shadow-none">
-            <CardHeader className="flex p-7 items-center">
-                <CardTitle className="text-xl font-bold">Edit Workspace</CardTitle>
+            <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
+                <Button size="sm" variant="secondary" onClick={onCancel ? onCancel : () => router.push(`/workspaces/${initialValues.$id}`)}>
+                    <ArrowLeftIcon className="size-4 mr-2"/>
+                    Back
+                </Button>
+                <CardTitle className="text-xl font-bold">{initialValues.name}</CardTitle>
             </CardHeader>
             <div className="px-7">
                 <DottedSeparator />
@@ -142,7 +146,7 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
                                         <div className="flex flex-col">
                                             <FormLabel>Workspace Icon</FormLabel>
                                             <p className="text-sm text-muted-foreground">
-                                                JPG, PNG, SVG or JPEG, max 1MB
+                                                JPG, PNG, SVG or JPEG, max 300KB
                                             </p>
                                             <input
                                                 className="hidden"
