@@ -18,6 +18,7 @@ import { updateWorkspaceSchema } from "../schemas";
 import { useUpdateWorkspace } from "../api/use-update-workspace";
 import type { Workspace } from "../types";
 import { toast } from "sonner";
+import image from "next/image";
 
 interface EditWorkspaceFormProps {
     onCancel?: () => void;
@@ -36,6 +37,12 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
             image: initialValues.image,
         },
     });
+
+    const getImageUrl = (image: string) => {
+        if (!image) return '';
+        
+        return `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_IMAGES_BUCKET_ID || '')}/files/${encodeURIComponent(image)}/view?project=${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_PROJECT || '')}`;
+    };
 
     const onSubmit = async (values: z.infer<typeof updateWorkspaceSchema>) => {
         const formData = new FormData();
@@ -127,9 +134,8 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
                                                     src={field.value instanceof File 
                                                         ? URL.createObjectURL(field.value)
                                                         : field.value 
-                                                            ? `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.NEXT_PUBLIC_IMAGES_BUCKET_ID}/files/${field.value}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}&mode=admin`
-                                                            : ''
-                                                    } 
+                                                            ? `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_IMAGES_BUCKET_ID || '')}/files/${encodeURIComponent(field.value)}/view?project=${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_PROJECT || '')}`
+                                                            : ''}
                                                     onError={(e) => {
                                                         console.error('Image load error:', e);
                                                         form.setValue('image', undefined);

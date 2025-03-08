@@ -22,6 +22,12 @@ export const WorkspaceSwitcher = () => {
     const { data: workspaces } = useGetWorkspaces();
     const {open} = useCreateWorkspaceModal();
 
+    const getImageUrl = (image: string) => {
+        if (!image) return '';
+        
+        return `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_IMAGES_BUCKET_ID || '')}/files/${encodeURIComponent(image)}/view?project=${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_PROJECT || '')}`;
+    };
+
     const onSelect = (id: string) => {
         router.push(`/workspaces/${id}`);
     }
@@ -40,7 +46,7 @@ export const WorkspaceSwitcher = () => {
                 </SelectTrigger>
                 <SelectContent>
                     {workspaces?.documents.map((workspace: {
-                        imageUrl: string | undefined; 
+                        image: string | undefined; 
                         $id: string; 
                         name: string 
                     }) => (
@@ -48,7 +54,7 @@ export const WorkspaceSwitcher = () => {
                             <div className="flex justify-start items-center gap-3 font-medium">
                                 <WorkspaceAvatarProps 
                                     name={workspace.name} 
-                                    image={workspace.imageUrl}
+                                    image={workspace.image ? getImageUrl(workspace.image) : undefined}
                                 />
                                 <span className="truncate">{workspace.name}</span>
                             </div>
