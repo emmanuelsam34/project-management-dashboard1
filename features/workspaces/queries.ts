@@ -51,19 +51,8 @@ export const getWorkspaces = async () => {
 
     export const getWorkspace = async ({workspaceId}: GetWorkspaceProps) => {
         try {
-            const client = new Client()
-            .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-            .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!)
-    
-            const session = await (await cookies()).get(AUTH_COOKIE);
-    
-            if (!session) {
-                return null;
-            }
-    
-            client.setSession(session.value);
-            const databases = new Databases(client);
-            const account = new Account(client);
+            const { databases, account} = await createSessionClient();
+            
             const user = await account.get();
 
             const member = await getMember({

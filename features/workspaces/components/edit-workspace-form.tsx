@@ -86,6 +86,7 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
     }, [form]);
 
     return (
+        <div>
         <Card className="w-full h-full border-none shadow-none">
             <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
                 <Button size="sm" variant="secondary" onClick={onCancel ? onCancel : () => router.push(`/workspaces/${initialValues.$id}`)}>
@@ -219,5 +220,6 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
                 </Form>
             </CardContent>
         </Card>
+        </div>
     );
 };

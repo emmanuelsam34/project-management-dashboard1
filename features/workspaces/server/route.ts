@@ -7,6 +7,7 @@ import { ID, Query } from "node-appwrite";
 import { MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
 import { getMember } from "@/features/members/utils";
+import { error } from "console";
 
 const app = new Hono();
 
@@ -195,6 +196,35 @@ app.patch("/:workspaceId", sessionMiddleware, async (c) => {
         return c.json({ error: "Failed to update workspace" }, 500);
     }
 });
+
+app.delete(
+    "/:workspaceId",
+    sessionMiddleware,
+    async (c) => {
+        const databases = c.get("databases");
+        const user = c.get("user");
+
+        const { workspaceId } = c.req.param();
+
+        const member = await getMember({
+            databases,
+            workspaceId,
+            userId: user.$id,
+        });
+
+        if(!member || member.role !== MemberRole.ADMIN) {
+            return c.json({ error: "Unauthorized"}, 401)
+        }
+
+        await databases.deleteDocument(
+            DATABASE_ID,
+            WORKSPACES_ID,
+            workspaceId,
+        );
+
+        return c.json({ data: {$id: workspaceId }})
+    }
+)
 
 export default app;
 
