@@ -253,7 +253,7 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
                         <Button 
                         className="mt-6 w-fit ml-auto"
                         size="sm"
-                        variant="destructive"
+                        variant="red"
                         type="button"
                         disabled={isPending}
                         onClick={handleDelete}>

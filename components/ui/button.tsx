@@ -20,6 +20,7 @@ const buttonVariants = cva(
         ghost: "border-transparent shadow-none hover:bg-accent hover:text-accent-foreground",
         muted: "bg-neutral-200 text-neutral-600 hover:bg-neutral-200/80",
         teritary: "bg-blue-100 text-blue-600 border-transparent hover:bg-blue-200 shadow-none",
+        red: "bg-red-600 text-white border-red hover:bg-black"
       },
       size: {
         default: "h-10 px-4 py-2",
