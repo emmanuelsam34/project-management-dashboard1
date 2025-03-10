@@ -83,6 +83,18 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
         });
     };
 
+    const handleResetInviteCode = async () => {
+        const ok = await confirmReset();
+
+        if (!ok) return;
+        
+        resetInviteCode(initialValues.$id, {
+                onSuccess: () => {
+                  router.refresh();  
+                }
+        });
+    };
+
     const inputRef = useRef<HTMLInputElement>(null);
 
     const form = useForm<z.infer<typeof updateWorkspaceSchema>>({
@@ -316,7 +328,7 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
                         variant="destructive"
                         type="button"
                         disabled={isPending || isResettingInviteCode}
-                        onClick={handleDelete}>
+                        onClick={handleResetInviteCode}>
                             Reset Invite Link
                         </Button>
                     </div>
