@@ -47,20 +47,23 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
 
         deleteWorkspace(initialValues.$id, {
             onSuccess: () => {
-                
                 const remainingWorkspaces = workspaces?.documents.filter(
                     (workspace: { $id: string; }) => workspace.$id !== initialValues.$id
                 );
 
-                if (remainingWorkspaces?.length) {
-                    
-                    router.push(`/workspaces/${remainingWorkspaces[0].$id}`);
-                } else {
-                    
-                    router.push('/');
-                }
                 
-                toast.success("Workspace deleted successfully");
+                setTimeout(() => {
+                    if (remainingWorkspaces?.length) {
+                        router.push(`/workspaces/${remainingWorkspaces[0].$id}`);
+                    } else {
+                        
+                        window.location.href = '/workspaces/create';
+                    }
+                    toast.success("Workspace deleted successfully");
+                }, 0);
+            },
+            onError: (error) => {
+                toast.error(error.message || "Failed to delete workspace");
             }
         });
     };
@@ -122,6 +125,8 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
             }
         };
     }, [form]);
+
+    const fullInviteLink = `${window.location.origin}/workspaces/${initialValues.$id}/join/${initialValues.inviteCode}`
 
     return (
         <div className="flex flex-col gap-y-4">
@@ -274,7 +279,26 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
                         size="sm"
                         variant="red"
                         type="button"
-                        disabled={isPending}
+                        disabled={isPending || isDeletingWorkspace}
+                        onClick={handleDelete}>
+                            Delete Workspace
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+            <Card className="w-full h-full border-none shadow-none">
+                <CardContent className="p-7">
+                    <div className="flex flex-col">
+                        <h3 className="font-bold">Danger Zone</h3>
+                        <p className="text-sm text-muted-foreground">
+                            Deleting a workspace is irreversible and will remove all associated data
+                        </p>
+                        <Button 
+                        className="mt-6 w-fit ml-auto"
+                        size="sm"
+                        variant="red"
+                        type="button"
+                        disabled={isPending || isDeletingWorkspace}
                         onClick={handleDelete}>
                             Delete Workspace
                         </Button>
