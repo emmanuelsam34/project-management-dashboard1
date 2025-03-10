@@ -1,5 +1,6 @@
 import { DATABASE_ID, WORKSPACES_ID } from "@/config";
 import { getCurrent } from "@/features/auth/queries";
+import { JoinWorkspaceForm } from "@/features/workspaces/components/join-workspace-form";
 import { getWorkspaceInfo } from "@/features/workspaces/queries";
 import { Workspace } from "@/features/workspaces/types";
 import { createSessionClient } from "@/lib/appwrite";
@@ -23,9 +24,15 @@ const WorkspaceIdJoinPage = async ({
         workspaceId: params.workspaceId,
     })
 
+    if(!workspace) {
+        redirect("/");
+    }
+
+    const initialValues = workspace;
+
     return (
-        <div>
-            Workspace Id Join Page
+        <div className="w-full lg:max-w-xl">
+            <JoinWorkspaceForm initialValues={initialValues} />
         </div>
     );
 };
