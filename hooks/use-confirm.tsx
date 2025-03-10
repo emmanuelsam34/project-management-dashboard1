@@ -54,7 +54,7 @@ export const useConfirm = (
                         <Button onClick={handleCancel} variant="outline" className="w-full lg:w-auto">
                             Cancel
                         </Button>
-                        <Button onClick={handleClose} variant="red" className="w-full lg:w-auto">
+                        <Button onClick={handleConfirm} variant="red" className="w-full lg:w-auto">
                             Confirm
                         </Button>
                     </div>

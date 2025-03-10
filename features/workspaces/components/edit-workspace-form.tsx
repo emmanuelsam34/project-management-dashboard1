@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import image from "next/image";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useDeleteWorkspace } from "../api/use-delete-workspace";
+import { useGetWorkspaces } from "../api/use-get-workspaces";
 
 interface EditWorkspaceFormProps {
     onCancel?: () => void;
@@ -31,6 +32,7 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
     const router = useRouter();
     const { mutate, isPending } = useUpdateWorkspace();
     const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } = useDeleteWorkspace();
+    const { data: workspaces } = useGetWorkspaces();
 
     const [DeleteDialog, confirmDelete] = useConfirm(
         "Delete Workspace",
@@ -38,6 +40,30 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
         "destructive",
     );
 
+    const handleDelete = async () => {
+        const ok = await confirmDelete();
+
+        if (!ok) return;
+
+        deleteWorkspace(initialValues.$id, {
+            onSuccess: () => {
+                
+                const remainingWorkspaces = workspaces?.documents.filter(
+                    (workspace: { $id: string; }) => workspace.$id !== initialValues.$id
+                );
+
+                if (remainingWorkspaces?.length) {
+                    
+                    router.push(`/workspaces/${remainingWorkspaces[0].$id}`);
+                } else {
+                    
+                    router.push('/');
+                }
+                
+                toast.success("Workspace deleted successfully");
+            }
+        });
+    };
 
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -55,13 +81,6 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
         return `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_IMAGES_BUCKET_ID || '')}/files/${encodeURIComponent(image)}/view?project=${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_PROJECT || '')}`;
     };
 
-    const handleDelete = async () => {
-        const ok = await confirmDelete();
-
-        if (!ok) return;
-
-        console.log("deleting...");
-    };
 
     const onSubmit = async (values: z.infer<typeof updateWorkspaceSchema>) => {
         const formData = new FormData();
