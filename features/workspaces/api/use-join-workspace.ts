@@ -14,7 +14,7 @@ type WorkspaceResponse = {
 
 type JoinWorkspaceRequest = {
   workspaceId: string;
-  code: string; // Changed from inviteCode to code
+  code: string; 
 };
 
 export const useJoinWorkspace = () => { 
@@ -22,7 +22,7 @@ export const useJoinWorkspace = () => {
   const router = useRouter();
   
   return useMutation<WorkspaceResponse, Error, JoinWorkspaceRequest>({
-    mutationFn: async ({ workspaceId, code }) => { // Changed parameter name
+    mutationFn: async ({ workspaceId, code }) => { 
       try {
         if (!workspaceId || !code) {
           throw new Error('Workspace ID and invite code are required');
@@ -35,7 +35,7 @@ export const useJoinWorkspace = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            code // Changed to match schema
+            code 
           }),
         });
 

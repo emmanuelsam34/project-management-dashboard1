@@ -1,8 +1,8 @@
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation , useQueryClient } from "@tanstack/react-query";
 import { z } from "zod"; 
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+
 
 
 const registerSchema = z.object({

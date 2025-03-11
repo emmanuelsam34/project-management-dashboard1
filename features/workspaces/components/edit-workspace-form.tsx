@@ -4,9 +4,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useEffect } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeftIcon, CopyIcon, ImageIcon } from "lucide-react";
+import Image from "next/image";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,6 @@ import { updateWorkspaceSchema } from "../schemas";
 import { useUpdateWorkspace } from "../api/use-update-workspace";
 import type { Workspace } from "../types";
 import { toast } from "sonner";
-import image from "next/image";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useDeleteWorkspace } from "../api/use-delete-workspace";
 import { useGetWorkspaces } from "../api/use-get-workspaces";
@@ -30,7 +29,7 @@ interface EditWorkspaceFormProps {
     initialValues: Workspace;
 }
 
-export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceFormProps) {
+export function EditWorkspaceForm({ onCancel, initialValues }: Readonly<EditWorkspaceFormProps>) {
     const router = useRouter();
     const { mutate, isPending } = useUpdateWorkspace();
     const { 
@@ -166,7 +165,7 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
             <ResetDialog />
         <Card className="w-full h-full border-none shadow-none">
             <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
-                <Button size="sm" variant="secondary" onClick={onCancel ? onCancel : () => router.push(`/workspaces/${initialValues.$id}`)}>
+                <Button size="sm" variant="secondary" onClick={onCancel || (() => router.push(`/workspaces/${initialValues.$id}`))}>
                     <ArrowLeftIcon className="size-4 mr-2"/>
                     Back
                 </Button>
@@ -212,7 +211,7 @@ export function EditWorkspaceForm({ onCancel, initialValues }: EditWorkspaceForm
                                                     src={field.value instanceof File 
                                                         ? URL.createObjectURL(field.value)
                                                         : field.value 
-                                                            ? `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_IMAGES_BUCKET_ID || '')}/files/${encodeURIComponent(field.value)}/view?project=${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_PROJECT || '')}`
+                                                            ? `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_IMAGES_BUCKET_ID ?? '')}/files/${encodeURIComponent(field.value)}/view?project=${encodeURIComponent(process.env.NEXT_PUBLIC_APPWRITE_PROJECT ?? '')}`
                                                             : ''}
                                                     onError={(e) => {
                                                         console.error('Image load error:', e);
