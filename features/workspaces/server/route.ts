@@ -1,15 +1,13 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { createWorkspaceSchema, updateWorkspaceSchema } from "@/features/workspaces/schemas";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { DATABASE_ID, WORKSPACES_ID, IMAGES_BUCKET_ID, MEMBERS_ID } from "@/config";
 import { ID, Query } from "node-appwrite";
 import { MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
 import { getMember } from "@/features/members/utils";
-import { error } from "console";
-import { z } from "zod";
 import { Workspace } from "../types";
+import { joinWorkspaceSchema } from "../schemas";
 
 const app = new Hono();
 
@@ -263,47 +261,51 @@ app.post(
 app.post(
     "/:workspaceId/join",
     sessionMiddleware,
-    zValidator("json", z.object({ code: z.string() })),
-
+    zValidator("json", joinWorkspaceSchema),
     async (c) => {
-        const { workspaceId } = c.req.param();
-        const { code } = c.req.valid("json");
+        try {
+            const { workspaceId } = c.req.param();
+            const { code } = c.req.valid("json");
 
-        const databases = c.get("databases");
-        const user = c.get("user");
+            const databases = c.get("databases");
+            const user = c.get("user");
 
-        const member = await getMember({
-            databases,
-            workspaceId,
-            userId: user.$id,
-        })
-
-        if (member) {
-            return c.json({ error: "Already a member"}, 400)
-        }
-
-        const workspace = await databases.getDocument<Workspace>(
-            DATABASE_ID,
-            WORKSPACES_ID,
-            workspaceId
-        );
-
-        if (workspace.inviteCode !== code) {
-            return c.json({ error: "Invalid invite code"}, 400);
-        }
-
-        await databases.createDocument(
-            DATABASE_ID,
-            MEMBERS_ID,
-            ID.unique(),
-            {
+            const member = await getMember({
+                databases,
                 workspaceId,
                 userId: user.$id,
-                role: MemberRole.MEMBER,
-            }   
-        )
+            })
 
-        return c.json({ data: workspace })
+            if (member) {
+                return c.json({ error: "Already a member"}, 400)
+            }
+
+            const workspace = await databases.getDocument<Workspace>(
+                DATABASE_ID,
+                WORKSPACES_ID,
+                workspaceId
+            );
+
+            if (workspace.inviteCode !== code) {
+                return c.json({ error: "Invalid invite code"}, 400);
+            }
+
+            await databases.createDocument(
+                DATABASE_ID,
+                MEMBERS_ID,
+                ID.unique(),
+                {
+                    workspaceId,
+                    userId: user.$id,
+                    role: MemberRole.MEMBER,
+                }   
+            )
+
+            return c.json({ data: workspace })
+        } catch (error) {
+            console.error('Join workspace error:', error);
+            return c.json({ error: "Failed to join workspace" }, 400);
+        }
     }
 )
 

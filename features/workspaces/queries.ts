@@ -1,10 +1,7 @@
 
-import { cookies } from "next/headers"
-import { Databases, Client, Query, Account } from "node-appwrite"
-import { AUTH_COOKIE } from "@/features/auth/constants"
+import { Query } from "node-appwrite"
 
 import { DATABASE_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config"
-import { WorkspaceSwitcher } from "@/components/workspace-switcher"
 import { getMember } from "../members/utils"
 import { Workspace } from "./types"
 import { createSessionClient } from "@/lib/appwrite"

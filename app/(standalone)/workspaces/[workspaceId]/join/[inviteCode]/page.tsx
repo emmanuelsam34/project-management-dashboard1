@@ -1,9 +1,7 @@
-import { DATABASE_ID, WORKSPACES_ID } from "@/config";
 import { getCurrent } from "@/features/auth/queries";
 import { JoinWorkspaceForm } from "@/features/workspaces/components/join-workspace-form";
 import { getWorkspaceInfo } from "@/features/workspaces/queries";
-import { Workspace } from "@/features/workspaces/types";
-import { createSessionClient } from "@/lib/appwrite";
+
 import { redirect } from "next/navigation";
 
 

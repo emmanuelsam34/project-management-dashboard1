@@ -10,6 +10,10 @@ import {
     CardTitle
 } from "@/components/ui/card"
 import Link from "next/link";
+import { useJoinWorkspace } from "../api/use-join-workspace";
+import { useInviteCode } from "../hooks/use-invite-code";
+import { useWorkspaceId } from "../hooks/use-workspace-id";
+import { useRouter } from "next/navigation";
 
 interface JoinWorkspaceFormProps {
     initialValues: {
@@ -20,6 +24,22 @@ interface JoinWorkspaceFormProps {
 export const JoinWorkspaceForm = ({
     initialValues,
 }: JoinWorkspaceFormProps) => {
+    const router = useRouter();
+    const workspace = useWorkspaceId();
+    const inviteCode = useInviteCode();
+    const { mutate, isPending } = useJoinWorkspace();
+
+    const onSubmit = () => {
+        mutate({
+            workspaceId: workspace,
+            code: inviteCode
+        }, {
+            onSuccess: ({ data }) => {
+                router.push(`/workspaces/${data.$id}`);
+            }
+        })
+    }
+
     return (
         <Card className="w-full h-full border-none shadow-none">
             <CardHeader className="p-7">
@@ -34,17 +54,26 @@ export const JoinWorkspaceForm = ({
                 <DottedSeparator />
             </div>
             <CardContent className="p-7">
-                <div className="flex flex-col lg:flex-row gap-y-2 gap-x-2 items-center justify-between">
+                <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
                     <Button
                     className="w-full lg:w-fit"
                     variant="secondary"
                     type="button"
-                    asChild>
-                        <Link href="/">
+                    size="lg"
+                    asChild
+                    disabled={isPending}
+                    >
+                    <Link href="/">
                         Cancel
-                        </Link>
+                    </Link>
                     </Button>
-                    <Button>
+                    <Button
+                    size="lg"
+                    className="w-full lg:w-fit"
+                    type="button"
+                    disabled={isPending}
+                    onClick={onSubmit}
+                    >
                         Join Workspace
                     </Button>
 

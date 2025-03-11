@@ -13,4 +13,10 @@ export const updateWorkspaceSchema = z.object({
     image: z.union([z.instanceof(File), z.string()]).optional(),
 });
 
+export const joinWorkspaceSchema = z.object({
+  code: z.string().min(1, "Invite code is required"),
+});
+
+
+
 
