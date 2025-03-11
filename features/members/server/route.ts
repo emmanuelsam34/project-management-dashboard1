@@ -7,7 +7,6 @@ import { getMember } from "../utils";
 import { DATABASE_ID, MEMBERS_ID } from "@/config";
 import { Query } from "node-appwrite";
 import { MemberRole } from "../types";
-import { error } from "console";
 
 const app = new Hono();
     app.get(
@@ -159,5 +158,35 @@ const app = new Hono();
             return c.json({ data: { $id: memberToUpdate.$id }});
         }
     )
+
+    app.get("/", sessionMiddleware, async (c) => {
+        try {
+          const { searchParams } = new URL(c.req.url);
+          const workspaceId = searchParams.get('workspaceId');
+      
+          if (!workspaceId) {
+            return c.json({ error: "Workspace ID is required" }, 400);
+          }
+      
+          const databases = c.get("databases");
+      
+          const members = await databases.listDocuments(
+            DATABASE_ID,
+            MEMBERS_ID,
+            [Query.equal("workspaceId", workspaceId)]
+          );
+      
+          return c.json({
+            data: {
+              documents: members.documents,
+              total: members.total
+            }
+          });
+      
+        } catch (error) {
+          console.error("Fetch members error:", error);
+          return c.json({ error: "Failed to fetch members" }, 500);
+        }
+      });  
 
 export default app;

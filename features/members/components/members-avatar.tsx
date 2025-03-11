@@ -25,3 +25,5 @@ export const MemberAvatar = ({
         </Avatar>
     )
 };
+
+export default MemberAvatar;

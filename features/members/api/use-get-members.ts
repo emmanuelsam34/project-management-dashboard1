@@ -1,27 +1,43 @@
 import { useQuery } from "@tanstack/react-query";
 
-
-interface useGetMembersProps {
-    workspaceId: string;
+interface Member {
+  $id: string;
+  name?: string;
+  userId: string;
+  workspaceId: string;
+  role: 'ADMIN' | 'MEMBER';
 }
 
+interface MembersResponse {
+  data: {
+    documents: Member[];
+    total: number;
+  }
+}
 
-export const useGetMembers = ({
-    workspaceId
-}: useGetMembersProps) => {
- const query = useQuery({
+interface useGetMembersProps {
+  workspaceId: string;
+}
+
+export const useGetMembers = ({ workspaceId }: useGetMembersProps) => {
+  return useQuery<MembersResponse, Error>({
     queryKey: ["members", workspaceId],
     queryFn: async () => {
-      const response = await fetch("/api/members");
+      const response = await fetch(`/api/members?workspaceId=${encodeURIComponent(workspaceId)}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch members");
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.message || `Failed to fetch members: ${response.statusText}`);
       }
 
-      const { data } = await response.json();
-      return data;
+      return response.json();
     },
+    enabled: Boolean(workspaceId),
   });
-
-  return query;
 };
