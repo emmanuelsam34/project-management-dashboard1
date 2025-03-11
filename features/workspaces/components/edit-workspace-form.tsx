@@ -169,7 +169,7 @@ export function EditWorkspaceForm({ onCancel, initialValues }: Readonly<EditWork
                     <ArrowLeftIcon className="size-4 mr-2"/>
                     Back
                 </Button>
-                <CardTitle className="text-xl items-center font-bold">{initialValues.name}</CardTitle>
+                <CardTitle className="text-xl text-center items-center justify-center font-bold">{initialValues.name}</CardTitle>
             </CardHeader>
             <div className="px-7">
                 <DottedSeparator />

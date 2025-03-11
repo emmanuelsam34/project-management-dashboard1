@@ -11,40 +11,39 @@ type WorkspaceResponse = {
   };
 };
 
-export const useDeleteWorkspace = () => { 
+export const useUpdateMember = () => { 
   const queryClient = useQueryClient();
   const router = useRouter();
   
   return useMutation<WorkspaceResponse, Error, string>({
-    mutationFn: async (workspaceId) => {
+    mutationFn: async (memberId: string) => {
       try {
-        const response = await fetch(`/api/workspaces/${workspaceId}`, {
-          method: 'DELETE',
+        const response = await fetch(`/api/members/${memberId}`, {
+          method: 'PATCH',
           credentials: 'include',
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => null);
-          throw new Error(errorData?.error || 'Failed to delete workspace');
+          throw new Error(errorData?.error || 'Failed to update member');
         }
 
         const data = await response.json();
         return data;
       } catch (error) {
-        console.error('Workspace deletion error:', error);
+        console.error('Member update error:', error);
         throw error;
       }
     },
 
-    onSuccess: ({ data }) => {
-      toast.success("Workspace deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["workspaces"] });
-      queryClient.invalidateQueries({queryKey: ["workspace", data.$id]})
+    onSuccess: () => {
+      toast.success("Member updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["members"] });
       router.push('/workspaces');
     },
 
     onError: (error) => {
-      toast.error(error.message || "Failed to delete workspace");
+      toast.error(error.message || "Failed to delete Member");
     },
   });
 };
