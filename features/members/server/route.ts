@@ -8,8 +8,8 @@ import { DATABASE_ID, MEMBERS_ID } from "@/config";
 import { Query } from "node-appwrite";
 import { MemberRole } from "../types";
 
-const app = new Hono();
-    app.get(
+const members = new Hono();
+    members.get(
         "/",
         sessionMiddleware,
         zValidator("query", z.object({ workspaceId: z.string()})),
@@ -57,7 +57,7 @@ const app = new Hono();
         }
     )
 
-    app.delete(
+    members.delete(
         "/:memberId",
         sessionMiddleware,
         async (c) => {
@@ -105,7 +105,7 @@ const app = new Hono();
         }
     );
 
-    app.patch(
+    members.patch(
         "/:memberId",
         sessionMiddleware,
         zValidator("json", z.object({ role: z.nativeEnum(MemberRole)})),
@@ -159,7 +159,7 @@ const app = new Hono();
         }
     )
 
-    app.get("/", sessionMiddleware, async (c) => {
+    members.get("/", sessionMiddleware, async (c) => {
         try {
           const { searchParams } = new URL(c.req.url);
           const workspaceId = searchParams.get('workspaceId');
@@ -189,4 +189,4 @@ const app = new Hono();
         }
       });  
 
-export default app;
+export default members;

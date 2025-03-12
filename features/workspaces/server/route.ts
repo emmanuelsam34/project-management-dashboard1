@@ -9,9 +9,9 @@ import { getMember } from "@/features/members/utils";
 import { Workspace } from "../types";
 import { joinWorkspaceSchema } from "../schemas";
 
-const app = new Hono();
+const workspaces = new Hono();
 
-app.get("/", sessionMiddleware, async (c) => {
+workspaces.get("/", sessionMiddleware, async (c) => {
     try {
         const user = c.get("user");
         const databases = c.get("databases");
@@ -49,7 +49,7 @@ app.get("/", sessionMiddleware, async (c) => {
     }
 });
 
-app.post("/", sessionMiddleware, async (c) => {
+workspaces.post("/", sessionMiddleware, async (c) => {
     try {
         const formData = await c.req.formData();
         const name = formData.get('name') as string;
@@ -114,7 +114,7 @@ app.post("/", sessionMiddleware, async (c) => {
     }
 });
 
-app.patch("/:workspaceId", sessionMiddleware, async (c) => {
+workspaces.patch("/:workspaceId", sessionMiddleware, async (c) => {
     try {
         const databases = c.get("databases");
         const storage = c.get("storage");
@@ -197,7 +197,7 @@ app.patch("/:workspaceId", sessionMiddleware, async (c) => {
     }
 });
 
-app.delete(
+workspaces.delete(
     "/:workspaceId",
     sessionMiddleware,
     async (c) => {
@@ -226,7 +226,7 @@ app.delete(
     }
 )
 
-app.post(
+workspaces.post(
     "/:workspaceId/reset-invite-code",
     sessionMiddleware,
     async (c) => {
@@ -258,7 +258,7 @@ app.post(
     }
 )
 
-app.post(
+workspaces.post(
     "/:workspaceId/join",
     sessionMiddleware,
     zValidator("json", joinWorkspaceSchema),
@@ -309,7 +309,7 @@ app.post(
     }
 )
 
-export default app;
+export default workspaces;
 
 
 

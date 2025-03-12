@@ -8,14 +8,14 @@ import { sessionMiddleware } from '@/lib/session-middleware';
 import { loginSchema , registerSchema } from '../schemas';
 
 
-const app = new Hono();
+const auth = new Hono();
 
-app.get('/current', sessionMiddleware, async (c) => {
+auth.get('/current', sessionMiddleware, async (c) => {
   const user = c.get("user");
   return c.json({ data: user });
 });
 
-app.post('/login', zValidator("json", loginSchema), async (c) => {
+auth.post('/login', zValidator("json", loginSchema), async (c) => {
   const { email, password } = c.req.valid("json");
   const { account } = await createAdminClient();
   const session = await account.createEmailPasswordSession(email, password);
@@ -31,7 +31,7 @@ app.post('/login', zValidator("json", loginSchema), async (c) => {
   return c.json({ success: true });
 });
 
-app.post('/register', zValidator("json", registerSchema), async (c) => {
+auth.post('/register', zValidator("json", registerSchema), async (c) => {
   const { fullName, email, password } = c.req.valid("json");
   const { account } = await createAdminClient();
   await account.create(ID.unique(), email, password, fullName);
@@ -48,11 +48,11 @@ app.post('/register', zValidator("json", registerSchema), async (c) => {
   return c.json({ success: true });
 });
 
-app.post('/logout', sessionMiddleware, async (c) => {
+auth.post('/logout', sessionMiddleware, async (c) => {
   const account = c.get("account");
   deleteCookie(c, AUTH_COOKIE);
   await account.deleteSession("current");
   return c.json({ success: true });
 });
 
-export default app;
+export default auth;
