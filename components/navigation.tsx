@@ -2,7 +2,7 @@
 
 import Link  from 'next/link';
 import { usePathname } from 'next/navigation';
-import { UsersIcon, SettingsIcon, Icon } from 'lucide-react';
+import { UsersIcon, SettingsIcon } from 'lucide-react';
 import { GoCheckCircle, GoCheckCircleFill, GoHome, GoHomeFill } from 'react-icons/go';
 import { cn } from '@/lib/utils';
 

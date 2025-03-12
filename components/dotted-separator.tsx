@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { dir } from "console";
 
 interface DottedSeparatorProps {
     className?: string;
@@ -38,7 +37,6 @@ export const DottedSeparator = ({
             backgroundPosition: "center"
            }}
           />
-
         </div>
     )
 }
