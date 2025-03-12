@@ -5,11 +5,7 @@ import { Button } from "./ui/button";
 import { MenuIcon } from "lucide-react";
 import { Sidebar } from "./sidebar";
 
-import { usePathname } from "next/navigation";
-
 export const MobileSidebar = () => {
-    const pathname = usePathname();
-
     return (
         <Sheet modal={false}>
             <SheetTrigger asChild>
