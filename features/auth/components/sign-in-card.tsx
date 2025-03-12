@@ -10,6 +10,8 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react"; // Add this import
+import { useState } from "react"; // Add this import
 
 import { 
     Card, 
@@ -31,8 +33,7 @@ import { loginSchema } from "../schemas";
 import { useLogin } from "../api/use-login";
 
 export const SignInCard = () => {
-    
-
+    const [showPassword, setShowPassword] = useState(false); // Add this state
     const { mutate, isPending } = useLogin();
 
     const form = useForm<z.infer<typeof loginSchema>>({
@@ -84,11 +85,24 @@ export const SignInCard = () => {
                         <FormItem>
                             <FormLabel></FormLabel>
                             <FormControl>
-                                <Input 
-                                    type="password"
-                                    placeholder="Enter password"
-                                    {...field}
-                                />
+                                <div className="relative">
+                                    <Input 
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Enter password"
+                                        {...field}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="h-4 w-4" />
+                                        ) : (
+                                            <Eye className="h-4 w-4" />
+                                        )}
+                                    </button>
+                                </div>
                             </FormControl>
                             <FormMessage />
                         </FormItem>

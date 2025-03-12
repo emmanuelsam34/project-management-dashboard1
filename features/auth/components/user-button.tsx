@@ -38,8 +38,8 @@ export const UserButton = () => {
     }
 
     const userData = user as unknown as User;
-    const fallbackText = userData.name?.[0]?.toUpperCase() || 
-                        userData.email?.[0]?.toUpperCase() || 
+    const fallbackText = userData.name?.[0]?.toUpperCase() ?? 
+                        userData.email?.[0]?.toUpperCase() ?? 
                         "U";
 
     return (
@@ -73,7 +73,7 @@ export const UserButton = () => {
                 onClick={() => logout()}
                 className="h-10 flex items-center justify-center text-amber-700 font-medium cursor-pointer">
                     <LogOut className="size-4 mr-1" />
-                    LogOut 
+                    Logout 
                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
