@@ -8,7 +8,16 @@ import { cn } from "@/lib/utils";
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal, AwaitedReactNode } from "react";
+
+
+interface Project {
+    $id: string;
+    name: string;
+    image?: string;
+    workspaceId: string;
+    // Add other project properties that you're using
+  }
+
 
 export const Projects = () => {
     const projectId = null;
@@ -27,8 +36,8 @@ export const Projects = () => {
                     className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition" 
                 />
             </div>
-            {data?.documents.map((project: { $id: Key | null | undefined; name: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined; }) => {
-                const href = `/workspaces/${workspaceId}/projects/${projectId}`;
+            {data?.documents.map((project: Project) => {
+                const href = `/workspaces/${workspaceId}/projects/${project.$id}`;
                 const isActive = pathname === href;
                 return (
                     <Link 
