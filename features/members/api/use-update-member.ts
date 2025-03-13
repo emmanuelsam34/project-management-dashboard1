@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+
 
 type Member = {
   role: 'ADMIN' | 'MEMBER';
@@ -18,7 +18,7 @@ type WorkspaceResponse = {
 
 export const useUpdateMember = () => { 
   const queryClient = useQueryClient();
-  const router = useRouter();
+  
   
   return useMutation<WorkspaceResponse, Error, { memberId: string; data: Member }>({
     mutationFn: async ({ memberId, data }) => {
