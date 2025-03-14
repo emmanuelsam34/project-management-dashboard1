@@ -1,8 +1,7 @@
 import { toast } from "sonner";
 
-import { useMutation } from "@tanstack/react-query";
 import { z } from "zod"; 
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 const workspaceSchema = z.object({
   name: z.string().min(1, "Workspace name is required").max(50, "Workspace name cannot exceed 50 characters"),

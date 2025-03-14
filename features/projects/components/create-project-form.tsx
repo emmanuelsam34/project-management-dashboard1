@@ -1,5 +1,3 @@
-"use client";
-
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +8,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { CreateProjectSchema } from "../schema";    
 import { DottedSeparator } from "@/components/dotted-separator";
-
 
 import { Button } from "@/components/ui/button";
 
@@ -40,23 +37,29 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
     const { mutate, isPending } = useCreateProject();
 
     const inputRef = useRef<HTMLInputElement>(null);
-    const form = useForm<z.infer<typeof CreateProjectSchema>>({
-        resolver: zodResolver(CreateProjectSchema.omit({ workspaceId: true })),
+    
+    
+    type FormSchema = z.infer<typeof CreateProjectSchema>;
+    
+    const form = useForm<FormSchema>({
+        resolver: zodResolver(CreateProjectSchema),
         defaultValues: {
             name: "",
+            workspaceId: workspaceId || "",
         },
     });
 
-    const onSubmit = (values: z.infer<typeof CreateProjectSchema>) => {
+    const onSubmit = (values: FormSchema) => {
         const finalValues = {
             ...values,
-            workspaceId,
+            workspaceId: workspaceId || "",
             image: values.image instanceof File ? values.image : undefined,
         };
 
         mutate(finalValues, {
-            onSuccess: () => {
+            onSuccess: ({data}) => {
                 form.reset();
+                router.push(`/workspaces/${workspaceId}`);
             }
         });
     };
