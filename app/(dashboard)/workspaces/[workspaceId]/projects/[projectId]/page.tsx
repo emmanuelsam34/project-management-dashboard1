@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrent } from "@/features/auth/queries";
+import { getProject } from "@/features/projects/queries";
+import { ProjectAvatarProps } from "@/features/projects/components/project-avatar";
 
 
 interface ProjectIdPageProps {
@@ -11,9 +13,24 @@ const ProjectIdPage = async ({
     const user = await getCurrent();
     if(!user) redirect("/sign-in")
 
+    const initialValues = await getProject({projectId: params.projectId});
+
+    if(!initialValues) {
+        throw new Error("Project not found");
+    }
+
     return (
-        <div className="w-full lg:max-w-xl"> 
-            Project Id: {params.projectId} 
+        <div className="flex flex-col gap-y-4"> 
+        <div className="flex items-center justify-between">
+            <div className="flex items-center gap-x-2">
+                <ProjectAvatarProps
+                    name={initialValues.name}
+                />
+
+            </div>
+
+        </div>
+            
         </div>
     );
 };
