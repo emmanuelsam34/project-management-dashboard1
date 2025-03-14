@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 
-
 interface useGetProjectsProps {
     workspaceId: string;
 };
@@ -9,8 +8,13 @@ export const useGetProjects = ({
     workspaceId,
 }: useGetProjectsProps) => {
  const query = useQuery({
-    queryKey: ["projects"],
+    queryKey: ["projects", workspaceId], 
     queryFn: async () => {
+      
+      if (!workspaceId) {
+        return { documents: [] }; 
+      }
+      
       const url = new URL("/api/projects", window.location.origin);
       url.searchParams.set('workspaceId', workspaceId);
       const response = await fetch(url, {
@@ -27,6 +31,10 @@ export const useGetProjects = ({
       const { data } = await response.json();
       return data;
     },
+    
+    enabled: !!workspaceId, 
+    staleTime: 5 * 60 * 1000, 
+    refetchOnWindowFocus: true, 
   });
 
   return query;
