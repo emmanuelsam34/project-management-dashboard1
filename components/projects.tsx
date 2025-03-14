@@ -9,6 +9,7 @@ import { useCreateProjectModal } from "@/features/projects/hooks/use-create-proj
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { ProjectAvatarProps } from "@/features/projects/components/project-avatar";
 
 
 interface Project {
@@ -51,7 +52,7 @@ export const Projects = () => {
                             'flex items-center gap-2.5 p-2.5 rounded-md font-medium hover:text-primary transition text-neutral-500',
                             isActive && 'bg-white shadow-sm hover:opacity-100 text-primary'
                         )}>
-
+                        <ProjectAvatarProps image={project.image} name={project.name}/>
                         <span className="truncate">{project.name}</span>
                         </div>
                     </Link>
